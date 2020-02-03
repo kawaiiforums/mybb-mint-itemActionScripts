@@ -2,29 +2,29 @@
 
 A [Mint](https://github.com/kawaiiforums/mybb-mint) module registering Item Termination Points, Item Actions and creating handlers to support Item Action scenarios related to Item creation and removal using Item Type names.
 
-Custom scenarios can be defined as `$itemActionScripts` sub-arrays in `module.php`.
+Custom scenarios can be defined through arrays returned by files located in the  `scripts/` directory:
+```
+<?php
+
+return [
+    [
+        scenario 1 parameters...
+    ],
+    [
+        scenario 2 parameters...
+    ],
+];
+```
 
 Each scenario array contains:
-- the action identifier (`string $name`),
-- name of required Item Type (`string[] $acceptedItemTypeNames`; currently single Item actions are supported),
-- optionally: names of used Item Types to remove (consume) on Action execution (`string[] $itemTypeNamesToRemove`),
-- optionally: names of Item Types to create and assign to user on Action execution (`string[] $itemTypeNamesToCreate`).
+- `name`: the action identifier,
+- `acceptedItemTypeNames`: names (`string`) of required Item Types.
 
-The included example allows executing an `eat` action on items `pie` and `half-pie`: the former is swapped for the latter, which then can be removed completely:
-```php
-$itemActionScripts = [
-    [
-        'name' => 'eat',
-        'acceptedItemTypeNames' => ['pie'],
-        'itemTypeNamesToRemove' => ['pie'],
-        'itemTypeNamesToCreate' => ['half-pie'],
-    ],
-    [
-        'name' => 'eat',
-        'acceptedItemTypeNames' => ['half-pie'],
-        'itemTypeNamesToRemove' => ['half-pie'],
-    ],
-```
+Optional parameters:
+- `itemTypeNamesToRemove`: names (`string`) of used Item Types to remove (consume) on Action execution,
+- `itemTypeNamesToCreate`: names (`string`) of Item Types to create and assign to user on Action execution,
+- - `itemTypeNamesToCreateWithProbability`: names (`string` key) of Item Types to create and assign to user on Action execution with specified probability (`float` value),
+  - `itemsToCreateMin`, `itemsToCreateMax`: minimum and maximum number of Items (`int`) to create when using probability.
 
 As Item Actions are identified by their signature consisting of action name and names of accepted Item Types, it's possible to create actions with the same name for multiple different item sets.
 
