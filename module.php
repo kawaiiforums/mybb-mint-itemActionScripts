@@ -51,8 +51,8 @@ foreach ($itemActionScripts as $itemActionScript) {
         }
 
         if (!empty($itemActionScript['itemTypeNamesToCreateWithProbability'])) {
-            $minItems = $itemActionScript['itemsToCreateMin'];
-            $maxItems = $itemActionScript['itemsToCreateMax'];
+            $minItems = $itemActionScript['itemsToCreateMin'] ?? 0;
+            $maxItems = $itemActionScript['itemsToCreateMax'] ?? 1;
 
             $probabilitiesSum = array_sum($itemActionScript['itemTypeNamesToCreateWithProbability']);
 
