@@ -79,21 +79,23 @@ foreach ($itemActionScripts as $itemActionScript) {
             }
         }
 
-        $itemTypeIdsByName = array_column(
-            ItemTypes::with($db)->getByColumn('name', $itemTypeNamesToCreate),
-            'id',
-            'name'
-        );
+        if ($itemTypeNamesToCreate) {
+            $itemTypeIdsByName = array_column(
+                ItemTypes::with($db)->getByColumn('name', $itemTypeNamesToCreate),
+                'id',
+                'name'
+            );
 
-        foreach ($itemTypeNamesToCreate as $itemTypeName) {
-            if (isset($itemTypeIdsByName[$itemTypeName])) {
-                $result &= \mint\createItemsWithTerminationPoint(
-                    $itemTypeIdsByName[$itemTypeName],
-                    1,
-                    $action['user_id'],
-                    $terminationPointName,
-                    false
-                );
+            foreach ($itemTypeNamesToCreate as $itemTypeName) {
+                if (isset($itemTypeIdsByName[$itemTypeName])) {
+                    $result &= \mint\createItemsWithTerminationPoint(
+                        $itemTypeIdsByName[$itemTypeName],
+                        1,
+                        $action['user_id'],
+                        $terminationPointName,
+                        false
+                    );
+                }
             }
         }
 
