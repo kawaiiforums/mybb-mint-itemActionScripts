@@ -20,7 +20,7 @@ foreach (glob(__DIR__ . '/scripts/*.php') as $path) {
 foreach ($itemActionScripts as $itemActionScript) {
     $terminationPointName = 'action.' . $itemActionScript['name'];
 
-    $handler = function (array $action, array $actionItemsDetails) use ($itemActionScript, $terminationPointName): bool {
+    $handler = function (array $action, array $actionItemsDetails) use ($itemActionScript, $terminationPointName): array {
         global $db;
 
         $result = true;
@@ -79,6 +79,8 @@ foreach ($itemActionScripts as $itemActionScript) {
             }
         }
 
+        $createdItemTypeIds = [];
+
         if ($itemTypeNamesToCreate) {
             $itemTypeIdsByName = array_column(
                 ItemTypes::with($db)->getByColumn('name', $itemTypeNamesToCreate),
@@ -88,6 +90,8 @@ foreach ($itemActionScripts as $itemActionScript) {
 
             foreach ($itemTypeNamesToCreate as $itemTypeName) {
                 if (isset($itemTypeIdsByName[$itemTypeName])) {
+                    $createdItemTypeIds[] = $itemTypeIdsByName[$itemTypeName];
+
                     $result &= \mint\createItemsWithTerminationPoint(
                         $itemTypeIdsByName[$itemTypeName],
                         1,
@@ -99,7 +103,18 @@ foreach ($itemActionScripts as $itemActionScript) {
             }
         }
 
-        return $result;
+        if (!empty($itemActionScript['userBalanceOperation'])) {
+            \mint\userBalanceOperationWithTerminationPoint($action['user_id'], (int)$itemActionScript['userBalanceOperation'], $terminationPointName);
+        }
+
+        if (isset($itemActionScript['handler']) && is_callable($itemActionScript['handler'])) {
+            $result &= $itemActionScript['handler']($action, $actionItemsDetails, $terminationPointName);
+        }
+
+        return [
+            'success' => $result,
+            'createdItemTypeIds' => $createdItemTypeIds,
+        ];
     };
 
     \mint\registerItemAction($itemActionScript['name'], $itemActionScript['acceptedItemTypeNames'], $handler, [
@@ -109,4 +124,10 @@ foreach ($itemActionScripts as $itemActionScript) {
     \mint\registerItemTerminationPoints([
         $terminationPointName,
     ]);
+
+    if (!empty($itemActionScript['registerCurrencyTerminationPoint'])) {
+        \mint\registerCurrencyTerminationPoints([
+            $terminationPointName,
+        ]);
+    }
 }
