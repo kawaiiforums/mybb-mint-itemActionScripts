@@ -56,7 +56,9 @@ foreach ($itemActionScripts as $itemActionScript) {
 
             $probabilitiesSum = array_sum($itemActionScript['itemTypeNamesToCreateWithProbability']);
 
-            for ($i = 1; $i <= $maxItems; $i++) {
+            $loops = max($minItems, $maxItems);
+
+            for ($i = 1; $i <= $loops; $i++) {
                 if ($probabilitiesSum < 1 && $i <= $minItems) {
                     $randomMax = $probabilitiesSum * 100;
                 } else {
@@ -104,7 +106,7 @@ foreach ($itemActionScripts as $itemActionScript) {
         }
 
         if (!empty($itemActionScript['userBalanceOperation'])) {
-            \mint\userBalanceOperationWithTerminationPoint($action['user_id'], (int)$itemActionScript['userBalanceOperation'], $terminationPointName);
+            $result &= \mint\userBalanceOperationWithTerminationPoint($action['user_id'], (int)$itemActionScript['userBalanceOperation'], $terminationPointName);
         }
 
         if (isset($itemActionScript['handler']) && is_callable($itemActionScript['handler'])) {
