@@ -30,4 +30,12 @@ return [
         'registerCurrencyTerminationPoint' => true,
         'userBalanceOperation' => 5,
     ],
+    [
+        'name' => 'join_wit_club',
+        'acceptedItemTypeNames' => ['riddle-answer'],
+        'handler' => function (array $action, array $actionItemsDetails, string $terminationPointName): bool {
+            $groupId = 8;
+            return join_usergroup($action['user_id'], $groupId);
+        },
+    ],
 ];
