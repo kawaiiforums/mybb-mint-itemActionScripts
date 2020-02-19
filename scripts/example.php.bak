@@ -14,8 +14,8 @@ return [
     ],
     [
         'name' => 'open_chest',
-        'acceptedItemTypeNames' => ['chest', 'chest-key'],
-        'itemTypeNamesToRemove' => ['chest', 'chest-key'],
+        'acceptedItemTypeNames' => ['chest', 'chest_key'],
+        'itemTypeNamesToRemove' => ['chest', 'chest_key'],
         'itemTypeNamesToCreateWithProbability' => [
             'rare-coin' => 0.1,
             'litter' => 0.5,
